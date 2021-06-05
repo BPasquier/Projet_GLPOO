@@ -9,18 +9,18 @@ class SauceController :
 
     def Create_Account(self, Pseudo, Mdp):
         with self._database_engine.new_session() as session:
-            MemberDAO(session).AddAccount(Pseudo, Mdp)
+            MemberDAO(session).AddUser(Pseudo, Mdp)
 
     def Connexion(self, Pseudo, Mdp):
         with self._database_engine.new_session() as session:
-            ListeMembres = MemberDAO(session).getAllAccount()
+            ListeMembres = MemberDAO(session).getAllUsers()
             for membre in ListeMembres:
-                if membre[0] == Pseudo and membre[1] == Mdp:
-                    return # Return les posts
+                if membre.m_nickname == Pseudo and membre.m_password == Mdp:
+                    return membre.m_requestList
 
     def Create_Post(self, Pseudo, texte):
         with self._database_engine.new_session() as session:
-            MemberDAO(session).AddPost(Pseudo, texte)
+            MemberDAO(session).AddRequest(Pseudo, texte)
 
     def Repondre():
 
