@@ -44,7 +44,8 @@ class Database:
                 requests = userLines[line-1].split(',')
                 tabRequests = []
                 for id in requests:
-                    tabRequests.append(self.m_requestList[int(id)])
+                    if id.isnumeric():
+                        tabRequests.append(self.m_requestList[int(id)])
 
                 self.m_userList.append(User(userLines[line-4], userLines[line-3], userLines[line-2]))
                 self.m_userList[len(self.m_userList)-1].m_requestList.append(tabRequests)
@@ -62,7 +63,7 @@ class Database:
         lines.append(nickname + '\n')
         lines.append(password + '\n')
         lines.append(str(DEFAULT_SAUCE) + '\n')
-        lines.append('0\n')
+        lines.append('\n')
         lines.append(']\n')
 
         self.m_userList.append(User(nickname, password, DEFAULT_SAUCE))
@@ -75,9 +76,71 @@ class Database:
         sortie.writelines(lines)
         sortie.close()
 
+    def AddRequest(self, user, link, text, sauce):
+        # Ajout de la requête à request_database
+        try:
+            entree = open('./request/request_database.txt', "r")
+        except:
+            sys.exit("Impossible d'ouvrir le fichier ./request/request_database.txt")
+
+        lines = entree.readlines()
+        entree.close()
+
+        newid = int(lines[len(lines)-5])+1
+
+        lines.append('[\n')
+        lines.append(str(newid) + '\n')
+        lines.append(link + '\n')
+        lines.append(text + '\n')
+        lines.append(str(sauce) + '\n')
+        lines.append(']\n')
+
+        self.m_requestList.append(Request(newid, link, text, sauce))
+
+        try:
+            sortie = open('./request/request_database.txt', "w")
+        except:
+            sys.exit("Impossible de créer le fichier ./request/request_database.txt.txt")
+
+        sortie.writelines(lines)
+        sortie.close()
+
+        # Ajout de la requête à son user
+
+        user.m_requestList.append(newid)
+
+        try:
+            entree = open('./user/user_database.txt', "r")
+        except:
+            sys.exit("Impossible d'ouvrir le fichier ./user/user_database.txt")
+
+        lines = entree.readlines()
+        entree.close()
+
+        for line in range(len(lines)):
+            if user.m_nickname + '\n' == lines[line]:
+                if user.m_password + '\n' == lines[line+1]:
+                    if len(lines[line+3]) > 1:
+                        lines[line+3] = lines[line+3].replace('\n', '') + ',' + str(newid) + '\n'
+                    else:
+                        lines[line + 3] = lines[line + 3].replace('\n', '') + str(newid) + '\n'
+
+        try:
+            sortie = open('./user/user_database.txt', "w")
+        except:
+            sys.exit("Impossible de créer le fichier ./user/user_database.txt")
+
+        sortie.writelines(lines)
+        sortie.close()
+
     def GetAllUsers(self):
         return self.m_userList
 
+    def GetAllRequests(self):
+        return self.m_requestList
+
 db = Database()
 db.LoadDatabase()
+# db.AddUser('Test', 'Testing')
+# db.AddRequest(db.m_userList[2], 'berserk', "quel mangaka ?", 10)
 print(db.GetAllUsers())
