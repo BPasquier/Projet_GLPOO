@@ -1,0 +1,12 @@
+[
+Nickname
+Password
+30
+0,1
+]
+[
+Nick
+Pass
+15
+1
+]
