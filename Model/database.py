@@ -138,9 +138,9 @@ class Database:
 
     def GetAllRequests(self):
         return self.m_requestList
-
+'''
 db = Database()
 db.LoadDatabase()
 # db.AddUser('Test', 'Testing')
 # db.AddRequest(db.m_userList[2], 'berserk', "quel mangaka ?", 10)
-print(db.GetAllUsers())
+print(db.GetAllUsers())'''
