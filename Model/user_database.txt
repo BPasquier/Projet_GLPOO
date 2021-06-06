@@ -1,0 +1,12 @@
+[
+Nickname
+Password
+30
+0
+]
+[
+Nick
+Testing
+50
+1,2
+]
