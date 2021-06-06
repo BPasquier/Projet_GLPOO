@@ -9,6 +9,7 @@ class Database:
         self.m_userList = []
 
     def LoadDatabase(self):
+        # Chargement des requêtes
         try:
             entree = open('./request/request_database.txt', "r")
         except:
@@ -26,6 +27,7 @@ class Database:
             if requestLines[line] == ']' or requestLines[line] == ']\n':
                 self.m_requestList.append(Request(requestLines[line-4], requestLines[line-3], requestLines[line-2], requestLines[line-1]))
 
+        # Chargement des utilisateurs
         try:
             entree = open('./user/user_database.txt', "r")
         except:
@@ -45,7 +47,9 @@ class Database:
                 tabRequests = []
                 for id in requests:
                     if id.isnumeric():
-                        tabRequests.append(self.m_requestList[int(id)])
+                        for request in self.m_requestList:
+                            if request.m_id == id:
+                                tabRequests.append(request)
 
                 self.m_userList.append(User(userLines[line-4], userLines[line-3], userLines[line-2]))
                 self.m_userList[len(self.m_userList)-1].m_requestList.append(tabRequests)
@@ -196,12 +200,11 @@ class Database:
 
     def GetAllRequests(self):
         return self.m_requestList
-'''
+
 db = Database()
 db.LoadDatabase()
 # db.AddUser('Test', 'Testing')
 # db.AddRequest(db.m_userList[2], 'berserk', "quel mangaka ?", 10)
 db.DeleteRequest(db.m_requestList[1])
-db.AddRequest(db.m_userList[1], 'vimeo.com', 'site?', 10)
+db.AddRequest(db.m_userList[0], 'vimeo.com', 'site?', 10)
 print(db.GetAllRequests())
-'''
