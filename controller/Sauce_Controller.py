@@ -1,8 +1,5 @@
 import re
 
-from model.database import database
-
-
 class SauceController :
 
     def __init__(self, database_engine):
@@ -34,9 +31,8 @@ class SauceController :
         return 1
        
 
-    def Repondre(self, Pseudo, id_Post):
+    #def Repondre(self, Pseudo, id_Post):
+    #    return 0
         
-
-    def Valider(self, pseudo, id_Post):
-        if 
-            
+    #def Valider(self, pseudo, id_Post):
+    #    return 0

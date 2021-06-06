@@ -1,7 +1,3 @@
-from user.user import User
-from request.request import Request
-from answer.answer import Answer
-
 import sys
 DEFAULT_SAUCE = 50
 
@@ -24,6 +20,28 @@ def OutputLines(path, lines):
     sortie.writelines(lines)
     sortie.close()
 
+class User:
+    def __init__(self, p_nickname, p_password, p_sauce):
+        self.m_nickname = p_nickname
+        self.m_password = p_password
+        self.m_sauce = p_sauce
+        self.m_requestList = []
+
+class Request:
+    def __init__(self, p_id, p_link, p_text, p_sauce):
+        self.m_id = p_id
+        self.m_link = p_link
+        self.m_text = p_text
+        self.m_sauce = p_sauce
+        self.m_answerList = []
+
+class Answer:
+    def __init__(self, p_requestID, p_text, p_user: User):
+        self.m_requestID = p_requestID
+        self.m_text = p_text
+        self.m_user = p_user
+
+
 class Database:
     def __init__(self):
         self.m_requestList = []
@@ -31,7 +49,8 @@ class Database:
 
     def LoadDatabase(self):
         # Chargement des requêtes
-        lines = GetLines('./request/request_database.txt')
+        lines = GetLines('./model/request_database.txt')
+        print('a')
         requestLines = []
         i = 0
         for j in lines:
@@ -43,7 +62,7 @@ class Database:
                 self.m_requestList.append(Request(requestLines[line-4], requestLines[line-3], requestLines[line-2], requestLines[line-1]))
 
         # Chargement des utilisateurs
-        lines = GetLines('./user/user_database.txt')
+        lines = GetLines('./model/user_database.txt')
         userLines = []
         i = 0
         for j in lines:
@@ -64,7 +83,7 @@ class Database:
                 self.m_userList[len(self.m_userList)-1].m_requestList = tabRequests
 
         # Chargement des réponses
-        lines = GetLines('./answer/answer_database.txt')
+        lines = GetLines('./model/answer_database.txt')
         answerLines = []
         i = 0
         for j in lines:
@@ -80,7 +99,7 @@ class Database:
                                 request.m_answerList.append(Answer(request.m_id, answerLines[line-2], user))
 
     def AddUser(self, nickname, password):
-        lines = GetLines('./user/user_database.txt')
+        lines = GetLines('./model/user_database.txt')
 
         lines.append('[\n')
         lines.append(nickname + '\n')
@@ -91,11 +110,11 @@ class Database:
 
         self.m_userList.append(User(nickname, password, DEFAULT_SAUCE))
 
-        OutputLines('./user/user_database.txt', lines)
+        OutputLines('./model/user_database.txt', lines)
 
     def AddRequest(self, user, link, text, sauce):
         # Ajout de la requête à request_database
-        lines = GetLines('./request/request_database.txt')
+        lines = GetLines('./model/request_database.txt')
 
         if len(lines) > 5:
             newid = int(lines[len(lines)-5])+1
@@ -111,13 +130,13 @@ class Database:
 
         self.m_requestList.append(Request(newid, link, text, sauce))
 
-        OutputLines('./request/request_database.txt', lines)
+        OutputLines('./model/request_database.txt', lines)
 
         # Ajout de la requête à son user
 
         user.m_requestList.append(self.m_requestList[len(self.m_requestList) - 1])
 
-        lines = GetLines('./user/user_database.txt')
+        lines = GetLines('./model/user_database.txt')
 
         for line in range(len(lines)):
             if user.m_nickname + '\n' == lines[line]:
@@ -127,11 +146,11 @@ class Database:
                     else:
                         lines[line + 3] = lines[line + 3].replace('\n', '') + str(newid) + '\n'
 
-        OutputLines('./user/user_database.txt', lines)
+        OutputLines('./model/user_database.txt', lines)
 
     def AddAnswer(self, request, text, user):
         # Ajout de la réponse à answer_database
-        lines = GetLines('./answer/answer_database.txt')
+        lines = GetLines('./model/answer_database.txt')
         requestid = request.m_id
 
         lines.append('[\n')
@@ -140,7 +159,7 @@ class Database:
         lines.append(user.m_nickname + '\n')
         lines.append(']\n')
 
-        OutputLines('./answer/answer_database.txt', lines)
+        OutputLines('./model/answer_database.txt', lines)
 
         # Ajout de la réponse à sa requête
         for dbrequest in self.m_requestList:
@@ -148,7 +167,7 @@ class Database:
                 dbrequest.m_answerList.append(Answer(requestid, text, user))
 
     def DeleteRequest(self, request):
-        lines = GetLines('./user/user_database.txt')
+        lines = GetLines('./model/user_database.txt')
 
         # Suppression de la requête de la database
         if request in self.m_requestList:
@@ -167,10 +186,10 @@ class Database:
                         else:
                             lines[line + 3] = lines[line + 3].replace(str(request.m_id), '')
 
-        OutputLines('./user/user_database.txt', lines)
+        OutputLines('./model/user_database.txt', lines)
 
         # Suppression de la requête de request_database
-        lines = GetLines('./request/request_database.txt')
+        lines = GetLines('./model/request_database.txt')
 
         line = 0
         while line < len(lines):
@@ -179,10 +198,10 @@ class Database:
                     lines.pop(line-1)
             line += 1
 
-        OutputLines('./request/request_database.txt', lines)
+        OutputLines('./model/request_database.txt', lines)
 
     def DeleteUser(self, user):
-        lines = GetLines('./request/request_database.txt')
+        lines = GetLines('./model/request_database.txt')
 
         # Suppression des requêtes associées à l'utilisateur
         while len(user.m_requestList) != 0:
@@ -200,10 +219,10 @@ class Database:
                         lines.pop(line - 1)
             line += 1
 
-        OutputLines('./request/request_database.txt', lines)
+        OutputLines('./model/request_database.txt', lines)
 
     def DeleteAnswer(self, answer):
-        lines = GetLines('./answer/answer_database.txt')
+        lines = GetLines('./model/answer_database.txt')
 
         for request in self.m_requestList:
             if answer in request.m_answerList:
@@ -218,7 +237,7 @@ class Database:
                             lines.pop(line - 1)
             line += 1
 
-        OutputLines('./answer/answer_database.txt', lines)
+        OutputLines('./model/answer_database.txt', lines)
 
     def GetAllUsers(self):
         return self.m_userList
