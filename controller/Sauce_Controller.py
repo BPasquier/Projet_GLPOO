@@ -32,8 +32,8 @@ class SauceController :
         return 1
        
 
-    #def Repondre(self, Pseudo, id_Post):
-    #    return 0
+    def Repondre(self, Pseudo, Post, texte):
+        self._database_engine.AddAnswer(Post, texte, Pseudo)
         
     #def Valider(self, pseudo, id_Post):
     #    return 0
