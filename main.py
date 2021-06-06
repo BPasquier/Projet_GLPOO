@@ -16,10 +16,6 @@ def run():
 	bdd = Database()
 	bdd.LoadDatabase()
 	admin_controller = SauceController(bdd)
-<<<<<<< HEAD
-	test = admin_controller.Create_Post("Koufano", "Salut c'est moi et je post un truc c'est qui le papa du fils de naruto ?", "https://www.youtube.com/watch?v=q1wpfoSOgQ0")
-	print (test)
-=======
 
 	admin_controller.Create_Post("Paul", "ouba", "zefzcsqcqef")
 	admin_controller.Create_Post("Paul", "ouba", "zefzcsqcqef")
@@ -33,7 +29,6 @@ def run():
 	window.show()
 
 	exit(app.exec_())
->>>>>>> 73d569f (Menu complet + Application réponse)
 
 	sys.exit()
 

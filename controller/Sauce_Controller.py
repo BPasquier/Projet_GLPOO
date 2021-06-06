@@ -17,7 +17,7 @@ class SauceController :
         ListeMembres = self._database_engine.GetAllUsers()
         for membre in ListeMembres:
             if membre.m_nickname == Pseudo and membre.m_password == Mdp:
-                return membre.GetAllRequests()
+                return self._database_engine.GetAllRequests()
         return 1
 
     def Create_Post(self, Pseudo, texte, link):
@@ -30,10 +30,12 @@ class SauceController :
                     self._database_engine.UpdateUser(membre)
                     return 0
         return 1
-       
 
     def Repondre(self, Pseudo, Post, texte):
-        self._database_engine.AddAnswer(Post, texte, Pseudo)
+        ListeMembres = self._database_engine.GetAllUsers()
+        for membre in ListeMembres:
+            if membre.m_nickname == Pseudo:
+                self._database_engine.AddAnswer(Post, texte, membre)
         
     #def Valider(self, pseudo, id_Post):
     #    return 0

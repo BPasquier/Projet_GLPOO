@@ -146,8 +146,6 @@ class Dialog(QDialog):
         else:
             self.Application()
 
-        print(self.name, self.password)
-
 
     def Application(self):
         self._Application = QGroupBox("Application")
@@ -184,7 +182,9 @@ class Dialog(QDialog):
 
         rep = self._Answer.text()
 
-        self._sauce_controller.Repondre(self._Name, self.liste[selec], self._Answer)
+        self._Answer.clear()
+
+        self._sauce_controller.Repondre(self.name, self.verif[selec], rep)
 
 
 
