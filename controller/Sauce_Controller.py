@@ -9,16 +9,16 @@ class SauceController :
         ListeMembres = self._database_engine.GetAllUsers()
         for membre in ListeMembres:
             if membre.m_nickname == Pseudo:
-                return 1
+                return 1 #Utlisateur déjà existant
         self._database_engine.AddUser(Pseudo, Mdp)
-        return 0
+        return 0 #Utilisateur créé
 
     def Connexion(self, Pseudo, Mdp):
         ListeMembres = self._database_engine.GetAllUsers()
         for membre in ListeMembres:
             if membre.m_nickname == Pseudo and membre.m_password == Mdp:
                 return membre.m_requestList
-        return 0
+        return 1
 
     def Create_Post(self, Pseudo, texte, link):
         ListeMembres = self._database_engine.GetAllUsers()
