@@ -9,7 +9,13 @@ class SauceController :
         self._database_engine = database_engine
 
     def Create_Account(self, Pseudo, Mdp):
-        self.AddUser(Pseudo, Mdp)
+        ListeMembres = self.getAllUsers()
+        for membre in ListeMembres:
+            if membre.m_nickname == Pseudo:
+                return 1
+            else :
+                self.AddUser(Pseudo, Mdp)
+                return 0
 
     def Connexion(self, Pseudo, Mdp):
         ListeMembres = self.getAllUsers()
@@ -18,10 +24,19 @@ class SauceController :
                 return membre.m_requestList
 
     def Create_Post(self, Pseudo, texte):
-        self.AddRequest(Pseudo, texte)
+        ListeMembres = self.getAllUsers()
+        for membre in ListeMembres:
+            if membre.m_nickname == Pseudo:
+                if membre.m_sauce > 10:
+                    membre.m_sauce -= 10
+                    self.AddRequest(Pseudo, texte)
+                    return 0
+        return 1
+       
 
-    def Repondre():
-
-
-    def Valider():
+    def Repondre(self, Pseudo, id_Post):
         
+
+    def Valider(self, pseudo, id_Post):
+        if 
+            
