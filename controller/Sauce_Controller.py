@@ -17,7 +17,7 @@ class SauceController :
         ListeMembres = self._database_engine.GetAllUsers()
         for membre in ListeMembres:
             if membre.m_nickname == Pseudo and membre.m_password == Mdp:
-                return membre.GetAllRequests
+                return membre.GetAllRequests()
         return 1
 
     def Create_Post(self, Pseudo, texte, link):
