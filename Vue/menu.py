@@ -85,7 +85,7 @@ class Dialog(QDialog):
         self._InscriptionMenu = QGroupBox("Inscription")
 
         self._Name = QLineEdit("Enter your name")
-        self._Password = QLineEdit("Enter your password")
+        self._Password = QLineEdit("Enter your firstname")
 
         button = QPushButton("Signup")
         button.clicked.connect(self.InscriptionDB)
@@ -103,8 +103,8 @@ class Dialog(QDialog):
     def connect_User(self):
         self._ConnexionMenu = QGroupBox("Connexion")
 
-        self._Name = QLineEdit("Enter your nom")
-        self._Password = QLineEdit("Enter you password")
+        self._Name = QLineEdit("Enter your name")
+        self._Password = QLineEdit("Enter you firstname")
 
         button = QPushButton("Connect")
         button.clicked.connect(self.ConnexionDB)
@@ -128,7 +128,9 @@ class Dialog(QDialog):
 
         self._sauce_controller.Create_Account(self.name, self.password)
 
-        print(self.name, self.password)
+
+
+
 
 
     def ConnexionDB(self):
@@ -142,7 +144,7 @@ class Dialog(QDialog):
 
 
         if self.verif == 1:
-            print("Sale merde")
+            print("Mauvais identifiants")
         else:
             self.Application()
 
@@ -153,8 +155,6 @@ class Dialog(QDialog):
 
 
         self.liste = QComboBox()
-
-        print(self.verif)
 
         for item in self.verif:
             self.liste.addItem(item.m_text)

@@ -17,12 +17,6 @@ def run():
 	bdd.LoadDatabase()
 	admin_controller = SauceController(bdd)
 
-	admin_controller.Create_Post("Paul", "ouba", "zefzcsqcqef")
-	admin_controller.Create_Post("Paul", "ouba", "zefzcsqcqef")
-	admin_controller.Create_Post("Paul", "c'est lui", "zefzcsqcqef")
-	admin_controller.Create_Post("Paul", "le marsupilami", "zefzcsqcqef")
-
-
 
 	app = QApplication(sys.argv)
 	window = Dialog(admin_controller)
