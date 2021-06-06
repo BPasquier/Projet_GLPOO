@@ -20,6 +20,16 @@ def OutputLines(path, lines):
     sortie.writelines(lines)
     sortie.close()
 
+def UpdateUser(user):
+    lines = GetLines('./model/user_database.txt')
+
+    for line in range(len(lines)):
+        if user.m_nickname + '\n' == lines[line]:
+            lines[line + 1] = user.m_password + '\n'
+            lines[line + 2] = user.m_sauce + '\n'
+
+    OutputLines('./model/user_database', lines)
+
 class User:
     def __init__(self, p_nickname, p_password, p_sauce):
         self.m_nickname = p_nickname
@@ -199,7 +209,7 @@ class Database:
         OutputLines('./model/request_database.txt', lines)
 
     def DeleteUser(self, user):
-        lines = GetLines('./model/request_database.txt')
+        lines = GetLines('./model/user_database.txt')
 
         # Suppression des requêtes associées à l'utilisateur
         while len(user.m_requestList) != 0:
@@ -217,7 +227,7 @@ class Database:
                         lines.pop(line - 1)
             line += 1
 
-        OutputLines('./model/request_database.txt', lines)
+        OutputLines('./model/user_database.txt', lines)
 
     def DeleteAnswer(self, answer):
         lines = GetLines('./model/answer_database.txt')
@@ -242,18 +252,3 @@ class Database:
 
     def GetAllRequests(self):
         return self.m_requestList
-'''
-db = Database()
-db.LoadDatabase()
-
-db.AddUser('Nick', 'Testing')
-db.AddRequest(db.m_userList[1], 'image1.png', "source ?", 10)
-db.AddRequest(db.m_userList[1], 'image1.png', "source ?", 10)
-
-# db.DeleteAnswer(db.m_userList[0].m_requestList[0].m_answerList[0])
-# db.AddAnswer(db.m_requestList[0], "Kentaro Miura RIP", db.m_userList[0])
-# db.DeleteRequest(db.m_requestList[1])
-# db.AddRequest(db.m_userList[0], 'yahoo.com', 'site?', 10)
-# db.DeleteUser(db.m_userList[1])
-print(db.m_userList[0].m_requestList[0].m_answerList[1].m_user.m_nickname)
-'''
