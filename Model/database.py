@@ -133,6 +133,64 @@ class Database:
         sortie.writelines(lines)
         sortie.close()
 
+    def DeleteRequest(self, request):
+        try:
+            entree = open('./user/user_database.txt', "r")
+        except:
+            sys.exit("Impossible d'ouvrir le fichier ./user/user_database.txt")
+
+        lines = entree.readlines()
+        entree.close()
+
+        # Suppression de la requête de la database
+        if request in self.m_requestList:
+            self.m_requestList.remove(request)
+
+        # Suppression de la requête de la liste de l'utilisateur
+        for user in self.m_userList:
+            if request in user.m_requestList:
+                user.m_requestList.remove(request)
+            # Suppression de la requête de user_database
+            for line in range(len(lines)):
+                if user.m_nickname + '\n' == lines[line]:
+                    if user.m_password + '\n' == lines[line + 1]:
+                        if len(lines[line + 3]) > 2:
+                            lines[line + 3] = lines[line + 3].replace(',' + request.m_id, '')
+                        else:
+                            lines[line + 3] = lines[line + 3].replace(request.m_id, '')
+
+        try:
+            sortie = open('./user/user_database.txt', "w")
+        except:
+            sys.exit("Impossible de créer le fichier ./user/user_database.txt")
+
+        sortie.writelines(lines)
+        sortie.close()
+
+        # Suppression de la requête de request_database
+        try:
+            entree = open('./request/request_database.txt', "r")
+        except:
+            sys.exit("Impossible d'ouvrir le fichier ./request/request_database.txt")
+
+        lines = entree.readlines()
+        entree.close()
+
+        line = 0
+        while line < len(lines):
+            if request.m_id + '\n' == lines[line]:
+                for i in range(6):
+                    lines.pop(line-1)
+            line += 1
+
+        try:
+            sortie = open('./request/request_database.txt', "w")
+        except:
+            sys.exit("Impossible de créer le fichier ./request/request_database.txt")
+
+        sortie.writelines(lines)
+        sortie.close()
+
     def GetAllUsers(self):
         return self.m_userList
 
@@ -143,4 +201,7 @@ db = Database()
 db.LoadDatabase()
 # db.AddUser('Test', 'Testing')
 # db.AddRequest(db.m_userList[2], 'berserk', "quel mangaka ?", 10)
-print(db.GetAllUsers())'''
+db.DeleteRequest(db.m_requestList[1])
+db.AddRequest(db.m_userList[1], 'vimeo.com', 'site?', 10)
+print(db.GetAllRequests())
+'''
