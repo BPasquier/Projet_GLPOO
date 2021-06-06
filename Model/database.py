@@ -1,7 +1,28 @@
 from user.user import User
 from request.request import Request
+from answer.answer import Answer
+
 import sys
 DEFAULT_SAUCE = 50
+
+def GetLines(path):
+    try:
+        entree = open(path, "r")
+    except:
+        sys.exit(f"Impossible de lire le fichier {path}")
+
+    lines = entree.readlines()
+    entree.close()
+    return lines
+
+def OutputLines(path, lines):
+    try:
+        sortie = open(path, "w")
+    except:
+        sys.exit(f"Impossible d'ouvrir le fichier {path}")
+
+    sortie.writelines(lines)
+    sortie.close()
 
 class Database:
     def __init__(self):
@@ -10,13 +31,7 @@ class Database:
 
     def LoadDatabase(self):
         # Chargement des requêtes
-        try:
-            entree = open('./request/request_database.txt', "r")
-        except:
-            sys.exit("Impossible de lire le fichier ./request/request_database.txt")
-
-        lines = entree.readlines()
-        entree.close()
+        lines = GetLines('./request/request_database.txt')
         requestLines = []
         i = 0
         for j in lines:
@@ -28,13 +43,7 @@ class Database:
                 self.m_requestList.append(Request(requestLines[line-4], requestLines[line-3], requestLines[line-2], requestLines[line-1]))
 
         # Chargement des utilisateurs
-        try:
-            entree = open('./user/user_database.txt', "r")
-        except:
-            sys.exit("Impossible de lire le fichier './user/user_database.txt'")
-
-        lines = entree.readlines()
-        entree.close()
+        lines = GetLines('./user/user_database.txt')
         userLines = []
         i = 0
         for j in lines:
@@ -54,14 +63,24 @@ class Database:
                 self.m_userList.append(User(userLines[line-4], userLines[line-3], userLines[line-2]))
                 self.m_userList[len(self.m_userList)-1].m_requestList = tabRequests
 
-    def AddUser(self, nickname, password):
-        try:
-            entree = open('./user/user_database.txt', "r")
-        except:
-            sys.exit("Impossible de créer le fichier ./user/user_database.txt")
+        # Chargement des réponses
+        lines = GetLines('./answer/answer_database.txt')
+        answerLines = []
+        i = 0
+        for j in lines:
+            answerLines.append(lines[i].replace('\n', ''))
+            i = i + 1
 
-        lines = entree.readlines()
-        entree.close()
+        for line in range(len(answerLines)):
+            if answerLines[line] == ']':
+                for request in self.m_requestList:
+                    if answerLines[line-3] == request.m_id:
+                        for user in self.m_userList:
+                            if user.m_nickname == answerLines[line-1]:
+                                request.m_answerList.append(Answer(request.m_id, answerLines[line-2], user))
+
+    def AddUser(self, nickname, password):
+        lines = GetLines('./user/user_database.txt')
 
         lines.append('[\n')
         lines.append(nickname + '\n')
@@ -72,23 +91,11 @@ class Database:
 
         self.m_userList.append(User(nickname, password, DEFAULT_SAUCE))
 
-        try:
-            sortie = open('./user/user_database.txt', "w")
-        except:
-            sys.exit("Impossible de créer le fichier ./user/user_database.txt")
-
-        sortie.writelines(lines)
-        sortie.close()
+        OutputLines('./user/user_database.txt', lines)
 
     def AddRequest(self, user, link, text, sauce):
         # Ajout de la requête à request_database
-        try:
-            entree = open('./request/request_database.txt', "r")
-        except:
-            sys.exit("Impossible d'ouvrir le fichier ./request/request_database.txt")
-
-        lines = entree.readlines()
-        entree.close()
+        lines = GetLines('./request/request_database.txt')
 
         if len(lines) > 5:
             newid = int(lines[len(lines)-5])+1
@@ -104,25 +111,13 @@ class Database:
 
         self.m_requestList.append(Request(newid, link, text, sauce))
 
-        try:
-            sortie = open('./request/request_database.txt', "w")
-        except:
-            sys.exit("Impossible de créer le fichier ./request/request_database.txt.txt")
-
-        sortie.writelines(lines)
-        sortie.close()
+        OutputLines('./request/request_database.txt', lines)
 
         # Ajout de la requête à son user
 
         user.m_requestList.append(self.m_requestList[len(self.m_requestList) - 1])
 
-        try:
-            entree = open('./user/user_database.txt', "r")
-        except:
-            sys.exit("Impossible d'ouvrir le fichier ./user/user_database.txt")
-
-        lines = entree.readlines()
-        entree.close()
+        lines = GetLines('./user/user_database.txt')
 
         for line in range(len(lines)):
             if user.m_nickname + '\n' == lines[line]:
@@ -132,22 +127,28 @@ class Database:
                     else:
                         lines[line + 3] = lines[line + 3].replace('\n', '') + str(newid) + '\n'
 
-        try:
-            sortie = open('./user/user_database.txt', "w")
-        except:
-            sys.exit("Impossible de créer le fichier ./user/user_database.txt")
+        OutputLines('./user/user_database.txt', lines)
 
-        sortie.writelines(lines)
-        sortie.close()
+    def AddAnswer(self, request, text, user):
+        # Ajout de la réponse à answer_database
+        lines = GetLines('./answer/answer_database.txt')
+        requestid = request.m_id
+
+        lines.append('[\n')
+        lines.append(str(requestid) + '\n')
+        lines.append(text + '\n')
+        lines.append(user.m_nickname + '\n')
+        lines.append(']\n')
+
+        OutputLines('./answer/answer_database.txt', lines)
+
+        # Ajout de la réponse à sa requête
+        for dbrequest in self.m_requestList:
+            if dbrequest.m_id == requestid:
+                dbrequest.m_answerList.append(Answer(requestid, text, user))
 
     def DeleteRequest(self, request):
-        try:
-            entree = open('./user/user_database.txt', "r")
-        except:
-            sys.exit("Impossible d'ouvrir le fichier ./user/user_database.txt")
-
-        lines = entree.readlines()
-        entree.close()
+        lines = GetLines('./user/user_database.txt')
 
         # Suppression de la requête de la database
         if request in self.m_requestList:
@@ -166,22 +167,10 @@ class Database:
                         else:
                             lines[line + 3] = lines[line + 3].replace(str(request.m_id), '')
 
-        try:
-            sortie = open('./user/user_database.txt', "w")
-        except:
-            sys.exit("Impossible de créer le fichier ./user/user_database.txt")
-
-        sortie.writelines(lines)
-        sortie.close()
+        OutputLines('./user/user_database.txt', lines)
 
         # Suppression de la requête de request_database
-        try:
-            entree = open('./request/request_database.txt', "r")
-        except:
-            sys.exit("Impossible d'ouvrir le fichier ./request/request_database.txt")
-
-        lines = entree.readlines()
-        entree.close()
+        lines = GetLines('./request/request_database.txt')
 
         line = 0
         while line < len(lines):
@@ -190,25 +179,12 @@ class Database:
                     lines.pop(line-1)
             line += 1
 
-        try:
-            sortie = open('./request/request_database.txt', "w")
-        except:
-            sys.exit("Impossible de créer le fichier ./request/request_database.txt")
-
-        sortie.writelines(lines)
-        sortie.close()
+        OutputLines('./request/request_database.txt', lines)
 
     def DeleteUser(self, user):
-        try:
-            entree = open('./user/user_database.txt', "r")
-        except:
-            sys.exit("Impossible d'ouvrir le fichier ./user/user_database.txt")
-
-        lines = entree.readlines()
-        entree.close()
+        lines = GetLines('./request/request_database.txt')
 
         # Suppression des requêtes associées à l'utilisateur
-        nbRequests = 0
         while len(user.m_requestList) != 0:
             self.DeleteRequest(user.m_requestList[0])
 
@@ -224,28 +200,43 @@ class Database:
                         lines.pop(line - 1)
             line += 1
 
-        try:
-            sortie = open('./user/user_database.txt', "w")
-        except:
-            sys.exit("Impossible de créer le fichier ./user/user_database.txt")
+        OutputLines('./request/request_database.txt', lines)
 
-        sortie.writelines(lines)
-        sortie.close()
+    def DeleteAnswer(self, answer):
+        lines = GetLines('./answer/answer_database.txt')
+
+        for request in self.m_requestList:
+            if answer in request.m_answerList:
+                request.m_answerList.remove(answer)
+
+        line = 0
+        while line < len(lines):
+            if answer.m_requestID + '\n' == lines[line]:
+                if answer.m_text + '\n' == lines[line+1]:
+                    if answer.m_user.m_nickname + '\n' == lines[line + 2]:
+                        for i in range(5):
+                            lines.pop(line - 1)
+            line += 1
+
+        OutputLines('./answer/answer_database.txt', lines)
 
     def GetAllUsers(self):
         return self.m_userList
 
     def GetAllRequests(self):
         return self.m_requestList
-
+'''
 db = Database()
 db.LoadDatabase()
-'''
-db.AddUser('Test', 'Testing')
+
+db.AddUser('Nick', 'Testing')
 db.AddRequest(db.m_userList[1], 'image1.png', "source ?", 10)
 db.AddRequest(db.m_userList[1], 'image1.png', "source ?", 10)
-'''
+
+# db.DeleteAnswer(db.m_userList[0].m_requestList[0].m_answerList[0])
+# db.AddAnswer(db.m_requestList[0], "Kentaro Miura RIP", db.m_userList[0])
 # db.DeleteRequest(db.m_requestList[1])
 # db.AddRequest(db.m_userList[0], 'yahoo.com', 'site?', 10)
-db.DeleteUser(db.m_userList[1])
-print(db.GetAllRequests())
+# db.DeleteUser(db.m_userList[1])
+print(db.m_userList[0].m_requestList[0].m_answerList[1].m_user.m_nickname)
+'''
