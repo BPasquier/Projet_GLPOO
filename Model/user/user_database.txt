@@ -4,9 +4,3 @@ Password
 30
 0
 ]
-[
-Nick
-Pass
-15
-1,4,5
-]

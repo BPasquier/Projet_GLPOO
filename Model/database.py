@@ -52,7 +52,7 @@ class Database:
                                 tabRequests.append(request)
 
                 self.m_userList.append(User(userLines[line-4], userLines[line-3], userLines[line-2]))
-                self.m_userList[len(self.m_userList)-1].m_requestList.append(tabRequests)
+                self.m_userList[len(self.m_userList)-1].m_requestList = tabRequests
 
     def AddUser(self, nickname, password):
         try:
@@ -90,7 +90,10 @@ class Database:
         lines = entree.readlines()
         entree.close()
 
-        newid = int(lines[len(lines)-5])+1
+        if len(lines) > 5:
+            newid = int(lines[len(lines)-5])+1
+        else:
+            newid = 0
 
         lines.append('[\n')
         lines.append(str(newid) + '\n')
@@ -111,7 +114,7 @@ class Database:
 
         # Ajout de la requête à son user
 
-        user.m_requestList.append(newid)
+        user.m_requestList.append(self.m_requestList[len(self.m_requestList) - 1])
 
         try:
             entree = open('./user/user_database.txt', "r")
@@ -159,9 +162,9 @@ class Database:
                 if user.m_nickname + '\n' == lines[line]:
                     if user.m_password + '\n' == lines[line + 1]:
                         if len(lines[line + 3]) > 2:
-                            lines[line + 3] = lines[line + 3].replace(',' + request.m_id, '')
+                            lines[line + 3] = lines[line + 3].replace(',' + str(request.m_id), '')
                         else:
-                            lines[line + 3] = lines[line + 3].replace(request.m_id, '')
+                            lines[line + 3] = lines[line + 3].replace(str(request.m_id), '')
 
         try:
             sortie = open('./user/user_database.txt', "w")
@@ -182,7 +185,7 @@ class Database:
 
         line = 0
         while line < len(lines):
-            if request.m_id + '\n' == lines[line]:
+            if str(request.m_id) + '\n' == lines[line] and lines[line-1] == '[\n':
                 for i in range(6):
                     lines.pop(line-1)
             line += 1
@@ -195,6 +198,40 @@ class Database:
         sortie.writelines(lines)
         sortie.close()
 
+    def DeleteUser(self, user):
+        try:
+            entree = open('./user/user_database.txt', "r")
+        except:
+            sys.exit("Impossible d'ouvrir le fichier ./user/user_database.txt")
+
+        lines = entree.readlines()
+        entree.close()
+
+        # Suppression des requêtes associées à l'utilisateur
+        nbRequests = 0
+        while len(user.m_requestList) != 0:
+            self.DeleteRequest(user.m_requestList[0])
+
+        # Suppression de l'utilisateur
+        if user in self.m_userList:
+            self.m_userList.remove(user)
+
+        line = 0
+        while line < len(lines):
+            if user.m_nickname + '\n' == lines[line]:
+                if user.m_password + '\n' == lines[line+1]:
+                    for i in range(6):
+                        lines.pop(line - 1)
+            line += 1
+
+        try:
+            sortie = open('./user/user_database.txt', "w")
+        except:
+            sys.exit("Impossible de créer le fichier ./user/user_database.txt")
+
+        sortie.writelines(lines)
+        sortie.close()
+
     def GetAllUsers(self):
         return self.m_userList
 
@@ -203,8 +240,12 @@ class Database:
 
 db = Database()
 db.LoadDatabase()
-# db.AddUser('Test', 'Testing')
-# db.AddRequest(db.m_userList[2], 'berserk', "quel mangaka ?", 10)
-db.DeleteRequest(db.m_requestList[1])
-db.AddRequest(db.m_userList[0], 'vimeo.com', 'site?', 10)
+'''
+db.AddUser('Test', 'Testing')
+db.AddRequest(db.m_userList[1], 'image1.png', "source ?", 10)
+db.AddRequest(db.m_userList[1], 'image1.png', "source ?", 10)
+'''
+# db.DeleteRequest(db.m_requestList[1])
+# db.AddRequest(db.m_userList[0], 'yahoo.com', 'site?', 10)
+db.DeleteUser(db.m_userList[1])
 print(db.GetAllRequests())
