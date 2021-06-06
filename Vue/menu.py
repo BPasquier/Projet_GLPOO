@@ -12,9 +12,14 @@ from PySide6.QtUiTools import QUiLoader
 import time
 
 
+
 class Dialog(QDialog):
 
-    def __init__(self):
+    verif = []
+
+    def __init__(self, Sauce_Controller):
+        self._sauce_controller = Sauce_Controller
+
         super().__init__()
 
 
@@ -94,7 +99,6 @@ class Dialog(QDialog):
 
         self._InscriptionMenu.show()
 
-        print("Inscription")
 
     def connect_User(self):
         self._ConnexionMenu = QGroupBox("Connexion")
@@ -122,6 +126,8 @@ class Dialog(QDialog):
 
         self._InscriptionMenu.close()
 
+        self._sauce_controller.Create_Account(self.name, self.password)
+
         print(self.name, self.password)
 
 
@@ -132,19 +138,55 @@ class Dialog(QDialog):
 
         self._ConnexionMenu.close()
 
+        self.verif = self._sauce_controller.Connexion(self.name, self.password)
+
+
+        if self.verif == 1:
+            print("Sale merde")
+        else:
+            self.Application()
+
         print(self.name, self.password)
 
 
+    def Application(self):
+        self._Application = QGroupBox("Application")
 
 
-#===================================================================================================================
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = Dialog()
-    window.show()
+        self.liste = QComboBox()
 
-    exit(app.exec_())
+        print(self.verif)
+
+        for item in self.verif:
+            self.liste.addItem(item.m_text)
+
+
+        button = QPushButton("Submit")
+        button.clicked.connect(self.Repondre)
+
+        self._label = QLabel("Answer")
+        self._Answer = QLineEdit()
+
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.liste)
+        layout.addWidget(self._label)
+        layout.addWidget(self._Answer)
+        layout.addWidget(button)
+
+        self._Application.setLayout(layout)
+
+        self._Application.show()
+
+    def Repondre(self):
+        selec = self.liste.currentIndex()
+
+        rep = self._Answer.text()
+
+        self._sauce_controller.Repondre(self._Name, self.liste[selec], self._Answer)
+
+
 
 
 
