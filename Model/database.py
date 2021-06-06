@@ -20,16 +20,6 @@ def OutputLines(path, lines):
     sortie.writelines(lines)
     sortie.close()
 
-def UpdateUser(user):
-    lines = GetLines('./model/user_database.txt')
-
-    for line in range(len(lines)):
-        if user.m_nickname + '\n' == lines[line]:
-            lines[line + 1] = user.m_password + '\n'
-            lines[line + 2] = user.m_sauce + '\n'
-
-    OutputLines('./model/user_database', lines)
-
 class User:
     def __init__(self, p_nickname, p_password, p_sauce):
         self.m_nickname = p_nickname
@@ -246,6 +236,16 @@ class Database:
             line += 1
 
         OutputLines('./model/answer_database.txt', lines)
+
+    def UpdateUser(self, user):
+        lines = GetLines('./model/user_database.txt')
+
+        for line in range(len(lines)):
+            if user.m_nickname + '\n' == lines[line]:
+                lines[line + 1] = user.m_password + '\n'
+                lines[line + 2] = user.m_sauce + '\n'
+
+        OutputLines('./model/user_database', lines)
 
     def GetAllUsers(self):
         return self.m_userList
