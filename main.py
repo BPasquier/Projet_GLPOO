@@ -9,7 +9,8 @@ def run():
 	bdd.LoadDatabase()
 	admin_controller = SauceController(bdd)
 	
-	
+	#print(admin_controller._database_engine.GetAllUsers()[1].m_nickname)
+
 
 	sys.exit()
 
