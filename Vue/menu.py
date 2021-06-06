@@ -12,15 +12,14 @@ from PySide6.QtUiTools import QUiLoader
 import time
 
 
+
+
 def create_User(self):
-
-
     loader = QUiLoader()
     inscription = loader.load("Inscription.ui", None)
     #window.pushButton.clicked.connect(lambda: print("OUI"))
 
     inscription.show()
-    time.sleep(10)
 
 
 def connect_User(self):
@@ -38,8 +37,6 @@ def application(self):
 
     application.show()
 
-def leave():
-    return
 
 
 
@@ -52,11 +49,11 @@ if __name__ == "__main__":
     window = loader.load("menu.ui", None)
     window.pushButton.clicked.connect(connect_User)
     window.pushButton_2.clicked.connect(create_User)
-    window.pushButton_3.clicked.connect(leave)
+    #window.pushButton_3.clicked.connect(leave)
 
     window.show()
 
-    sys.exit(app.exec_())
+    exit(app.exec_())
 
 
 
