@@ -6,27 +6,27 @@ class SauceController :
         self._database_engine = database_engine
 
     def Create_Account(self, Pseudo, Mdp):
-        ListeMembres = self.getAllUsers()
+        ListeMembres = self._database_engine.GetAllUsers()
         for membre in ListeMembres:
             if membre.m_nickname == Pseudo:
                 return 1
-            else :
-                self.AddUser(Pseudo, Mdp)
-                return 0
+        self._database_engine.AddUser(Pseudo, Mdp)
+        return 0
 
     def Connexion(self, Pseudo, Mdp):
-        ListeMembres = self.getAllUsers()
+        ListeMembres = self._database_engine.GetAllUsers()
         for membre in ListeMembres:
             if membre.m_nickname == Pseudo and membre.m_password == Mdp:
                 return membre.m_requestList
+        return 0
 
-    def Create_Post(self, Pseudo, texte):
-        ListeMembres = self.getAllUsers()
+    def Create_Post(self, Pseudo, texte, link):
+        ListeMembres = self._database_engine.GetAllUsers()
         for membre in ListeMembres:
             if membre.m_nickname == Pseudo:
                 if membre.m_sauce > 10:
                     membre.m_sauce -= 10
-                    self.AddRequest(Pseudo, texte)
+                    self._database_engine.AddRequest(membre, link, texte, 10)
                     return 0
         return 1
        

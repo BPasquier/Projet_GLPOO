@@ -41,7 +41,6 @@ class Answer:
         self.m_text = p_text
         self.m_user = p_user
 
-
 class Database:
     def __init__(self):
         self.m_requestList = []
@@ -50,7 +49,6 @@ class Database:
     def LoadDatabase(self):
         # Chargement des requêtes
         lines = GetLines('./model/request_database.txt')
-        print('a')
         requestLines = []
         i = 0
         for j in lines:
@@ -79,7 +77,7 @@ class Database:
                             if request.m_id == id:
                                 tabRequests.append(request)
 
-                self.m_userList.append(User(userLines[line-4], userLines[line-3], userLines[line-2]))
+                self.m_userList.append(User(userLines[line-4], userLines[line-3], int(userLines[line-2])))
                 self.m_userList[len(self.m_userList)-1].m_requestList = tabRequests
 
         # Chargement des réponses
