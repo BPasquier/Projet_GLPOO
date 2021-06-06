@@ -27,6 +27,7 @@ class SauceController :
                 if membre.m_sauce > 10:
                     membre.m_sauce -= 10
                     self._database_engine.AddRequest(membre, link, texte, 10)
+                    self._database_engine.UpdateUser(membre)
                     return 0
         return 1
        

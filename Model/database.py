@@ -243,9 +243,9 @@ class Database:
         for line in range(len(lines)):
             if user.m_nickname + '\n' == lines[line]:
                 lines[line + 1] = user.m_password + '\n'
-                lines[line + 2] = user.m_sauce + '\n'
+                lines[line + 2] = str(user.m_sauce) + '\n'
 
-        OutputLines('./model/user_database', lines)
+        OutputLines('./model/user_database.txt', lines)
 
     def GetAllUsers(self):
         return self.m_userList
